@@ -37,8 +37,8 @@
 			return [e];
 		}
 		else{
-			start = start || Date.parse(this.parseDate(e.EventDate,e.fAllDayEvent));
-			end = end || Date.parse(this.parseDate(e.EndDate,e.fAllDayEvent));
+			start = start || this.parseDate(e.EventDate,e.fAllDayEvent);
+			end = end || this.parseDate(e.EndDate,e.fAllDayEvent);
 			var er = [];
 			var wd = ['su','mo','tu','we','th','fr','sa'];
 			var wom = ['first','second','third','fourth']
@@ -58,7 +58,7 @@
 					var init = this.parseDate(e.EventDate,e.fAllDayEvent);
 					while(loop){
 						total++;
-						if(Date.parse(new Date(init)) >= start){
+						if((new Date(init)).getTime() >= start.getTime()){
 							var ed = new Date(init);
 							ed.setSeconds(ed.getSeconds()+e.Duration);
 							var ni = this.cloneObj(e);
@@ -70,7 +70,7 @@
 							er.push(ni);
 						}
 						init.setDate(init.getDate()+frequency);
-						if((Date.parse(new Date(init)) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
+						if((new Date(init) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
 					}
 				}
 				else if(arr.indexOf("weekday")!=-1){
@@ -86,25 +86,27 @@
 				var init = this.parseDate(e.EventDate,e.fAllDayEvent);
 				var initDay = init.getDay();
 				while(loop){
-					total++;
 					for(var i = initDay; i < 7; i++){
-						if(Date.parse(new Date(init)) >= start && arr.indexOf(wd[i]) != -1){
-							var nd = new Date(init);
-							nd.setDate(nd.getDate()+(i-initDay));
-							var ed = new Date(nd);
-							ed.setSeconds(ed.getSeconds()+e.Duration);
-							var ni = this.cloneObj(e);
-							ni.EventDate = new Date(nd);
-							ni.EndDate = ed;
-							ni.fRecurrence = false;
-							ni.Id = e.Id;
-							ni.ID = ni.Id;
-							er.push(ni);
+						if(arr.indexOf(wd[i]) != -1 && rTotal > total){
+							total++;
+							if((new Date(init)).getTime() >= start.getTime()){
+								var nd = new Date(init);
+								nd.setDate(nd.getDate()+(i-initDay));
+								var ed = new Date(nd);
+								ed.setSeconds(ed.getSeconds()+e.Duration);
+								var ni = this.cloneObj(e);
+								ni.EventDate = new Date(nd);
+								ni.EndDate = ed;
+								ni.fRecurrence = false;
+								ni.Id = e.Id;
+								ni.ID = ni.Id;
+								er.push(ni);
+							}
 						}
 					}
 					init.setDate(init.getDate()+((7*frequency)-initDay));
 					initDay = 0;
-					if((Date.parse(new Date(init)) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
+					if((new Date(init) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
 				}
 			}
 			if(e.RecurrenceData.indexOf("<monthly ")!=-1){
@@ -117,19 +119,23 @@
 				var day = parseInt(arr[arr.indexOf("day")+1]);
 				while(loop){
 					total++;
-					if(Date.parse(new Date(init)) >= start){
-						var ed = new Date(init);
-						ed.setSeconds(ed.getSeconds()+e.Duration);
-						var ni = this.cloneObj(e);
-						ni.EventDate = new Date(init);
-						ni.EndDate = ed;
-						ni.fRecurrence = false;
-						ni.Id = e.Id;
-						ni.ID = ni.Id;
-						er.push(ni);
+					if((new Date(init)).getTime() >= start.getTime()){
+						var nd = new Date(init);
+						nd.setDate(day);
+						if(nd.getMonth() == init.getMonth()){
+							var ed = new Date(nd);
+							ed.setSeconds(ed.getSeconds()+e.Duration);
+							var ni = this.cloneObj(e);
+							ni.EventDate = new Date(nd);
+							ni.EndDate = ed;
+							ni.fRecurrence = false;
+							ni.Id = e.Id;
+							ni.ID = ni.Id;
+							er.push(ni);
+						}
 					}
 					init.setMonth(init.getMonth()+frequency);
-					if((Date.parse(new Date(init)) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
+					if((new Date(init) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
 				}
 			}
 			if(e.RecurrenceData.indexOf("<monthlyByDay ")!=-1){
@@ -143,7 +149,7 @@
 				var temp = new Date();
 				while(loop){
 					total++;
-					if(Date.parse(new Date(init)) >= start){
+					if((new Date(init)).getTime() >= start.getTime()){
 						var nd = new Date(init);
 						nd.setDate(1); //set to first day of month
 						if(arr.indexOf("weekday")!=-1){ //find first weekday - if not saturday or sunday, then current date is a weekday
@@ -221,7 +227,7 @@
 						}
 					}
 					init.setMonth(init.getMonth()+frequency);
-					if((Date.parse(new Date(init)) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
+					if((new Date(init) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
 				}
 			}
 			if(e.RecurrenceData.indexOf("<yearly ")!=-1){
@@ -234,20 +240,25 @@
 				var month = (parseInt(arr[arr.indexOf("month")+1])-1);
 				var day = parseInt(arr[arr.indexOf("day")+1]);
 				while(loop){
-					total++;
-					if(Date.parse(new Date(init)) >= start){
-						var ed = new Date(init);
-						ed.setSeconds(ed.getSeconds()+e.Duration);
-						var ni = this.cloneObj(e);
-						ni.EventDate = new Date(init);
-						ni.EndDate = ed;
-						ni.fRecurrence = false;
-						ni.Id = e.Id;
-						ni.ID = ni.Id;
-						er.push(ni);
+					var nd = new Date(init);
+					nd.setMonth(month);
+					nd.setDate(day);
+					if((new Date(init)).getTime() <= nd.getTime()){
+						total++;
+						if((new Date(init)).getTime() >= start.getTime()){
+							var ed = new Date(nd);
+							ed.setSeconds(ed.getSeconds()+e.Duration);
+							var ni = this.cloneObj(e);
+							ni.EventDate = new Date(nd);
+							ni.EndDate = ed;
+							ni.fRecurrence = false;
+							ni.Id = e.Id;
+							ni.ID = ni.Id;
+							er.push(ni);
+						}
 					}
 					init.setFullYear(init.getFullYear()+frequency);
-					if((Date.parse(new Date(init)) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
+					if((new Date(init) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
 				}
 			}
 			if(e.RecurrenceData.indexOf("<yearlyByDay ")!=-1){
@@ -266,38 +277,42 @@
 					}
 				}
 				while(loop){
-					total++;
-					if(Date.parse(new Date(init)) >= start){
-						var nd = new Date(init);
-						nd.setMonth(month);
-						nd.setDate(1);
-						var dayOfMonth = nd.getDay();
-						if(day < dayOfMonth) nd.setDate((dayOfMonth+(7-dayOfMonth))+day); //first instance of this day in the selected month
-						else nd.setDate(dayOfMonth+(day-dayOfMonth));
-						if(weekdayOfMonth == 'last'){
-							var temp = new Date(nd);
-							while(temp.getMonth()==month){
-								nd = new Date(temp);
-								temp.setDate(temp.getDate()+7); //loop from first instance of month to last instance of month
+					var nd = new Date(init);
+					nd.setMonth(month);
+					if((new Date(init)).getTime() <= nd.getTime()){
+						total++;
+						if((new Date(init)).getTime() >= start.getTime()){
+							nd.setDate(1);
+							var dayOfMonth = nd.getDay();
+							if(day < dayOfMonth) nd.setDate(nd.getDate()+((7-dayOfMonth)+day)); //first instance of this day in the selected month
+							else nd.setDate(nd.getDate()+(day-dayOfMonth));
+							if(weekdayOfMonth == 'last'){
+								var temp = new Date(nd);
+								while(temp.getMonth()==month){
+									nd = new Date(temp);
+									temp.setDate(temp.getDate()+7); //loop from first instance of month to last instance of month
+								}
 							}
-						}
-						else{
-							nd.setDate(nd.getDate()+(7*(wom.indexOf(weekdayOfMonth))));
-						}
-						if(nd.getMonth()==month){
-							var ed = new Date(nd);
-							ed.setSeconds(ed.getSeconds()+e.Duration);
-							var ni = this.cloneObj(e);
-							ni.EventDate = new Date(nd);
-							ni.EndDate = ed;
-							ni.fRecurrence = false;
-							ni.Id = e.Id;
-							ni.ID = ni.Id;
-							er.push(ni);
+							else{
+								nd.setDate(nd.getDate()+(7*(wom.indexOf(weekdayOfMonth))));
+							}
+							if(nd.getMonth()==month){
+								var ed = new Date(nd);
+								ed.setSeconds(ed.getSeconds()+e.Duration);
+								var ni = this.cloneObj(e);
+								ni.EventDate = new Date(nd);
+								ni.EndDate = ed;
+								ni.fRecurrence = false;
+								ni.Id = e.Id;
+								ni.ID = ni.Id;
+								er.push(ni);
+							}
 						}
 					}
 					init.setFullYear(init.getFullYear()+frequency);
-					if((Date.parse(new Date(init)) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
+					init.setMonth(month);
+					init.setDate(1);
+					if((new Date(init) > end) || (rTotal > 0 && rTotal <= total)) loop = false;
 				}
 			}
 			return er;

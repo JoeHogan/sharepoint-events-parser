@@ -40,8 +40,8 @@ A recurring event may have been created several years ago, but maybe you only ca
 
 ```
 var dt = new Date();
-var startDate = Date.parse(new Date(dt.getFullYear(), dt.getMonth() - 1, 25));
-var endDate = Date.parse(new Date(dt.getFullYear(), dt.getMonth() + 1, 5));
+var startDate = new Date(dt.getFullYear(), dt.getMonth() - 1, 25); //start from the 25th of last month
+var endDate = new Date(dt.getFullYear(), dt.getMonth() + 1, 5); //end at the fifth of next month
  
 var parsedArray = spEventsParser.parseEvent(eventObject,startDate,endDate);
 ```
