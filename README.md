@@ -3,7 +3,7 @@ A way to parse SharePoint Calendar Event RecurrenceData into individual event ob
 
 ### Why
 
-Recurring events on a SharePoint calendar are not stored individually; instead, the parent event contains the recurrence information stored as XML. This library uses pure JavaScript to parse out the information from recurring events into individual objects so you can display them as such, either on a calendar of your own or in a list.
+Recurring events on a SharePoint calendar are not stored individually; instead, the parent event contains the recurrence information stored as XML. The only other way I've seen to get recurrence data from a calendar list on the client side is to use the List.asmx web service. This is not necessarily a bad way to go, but working with the XML returned from that web service can be burdensome. This library uses pure JavaScript to parse out the information from recurring events into individual javascript objects so you can display them as such, either on a calendar of your own or in a list.
 
 This has bee tested with SharePoint 2013 On-premises.
 
