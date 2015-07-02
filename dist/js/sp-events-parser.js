@@ -1,4 +1,4 @@
-﻿var spEventsParser = {
+var spEventsParser = {
 	parseEvents: function(events,start,end){
 		var full = [];
 		for(var i=0;i<events.length;i++){
@@ -6,6 +6,11 @@
 		}
 		return full;
 	},
+    
+    // Let's see how GIT handles this comment. This is the only change I'm making at this time. 7/1/2015 10:44pm. -Jason
+    
+    // Second change. 
+    
 	formatString: function(str){
 		var arr = str.split("'");
 		str = arr.join('');
