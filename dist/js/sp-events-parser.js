@@ -87,7 +87,7 @@
 				var initDay = init.getDay();
 				while(loop){
 					for(var i = initDay; i < 7; i++){
-						if(arr.indexOf(wd[i]) != -1 && rTotal > total){
+						if(arr.indexOf(wd[i]) != -1 && (rTotal > total || rTotal==0)){
 							total++;
 							if((new Date(init)).getTime() >= start.getTime()){
 								var nd = new Date(init);
