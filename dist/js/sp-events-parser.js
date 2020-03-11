@@ -202,7 +202,7 @@ var spEventsParser = {
 						else {
 							for (var i = 0; i < wd.length; i++) { //get first instance of the specified day
 								if (arr.indexOf(wd[i]) != -1) {
-									if (nd.getDate() > i) nd.setDate(nd.getDate() + (7 - (nd.getDay() - i)));
+									if (nd.getDay() > i) nd.setDate(nd.getDate() + (7 - (nd.getDay() - i)));
 									else nd.setDate(nd.getDate() + (i - nd.getDay()));
 								}
 							}
